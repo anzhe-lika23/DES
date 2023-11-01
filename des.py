@@ -149,3 +149,14 @@ def circular_shift_left(string, num_shifts):
         string = shifted_str
         shifted_str = ""
     return string
+
+
+# Ф-ція виконує побітову операцію XOR між двома рядками
+def bitwise_xor(str_1, str_2):
+    result_xor = ""
+    for i in range(len(str_1)):
+        if str_1[i] == str_2[i]:
+            result_xor += "0"
+        else:
+            result_xor += "1"
+    return result_xor
