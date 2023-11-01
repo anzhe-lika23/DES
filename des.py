@@ -154,9 +154,56 @@ def circular_shift_left(string, num_shifts):
 # Ф-ція виконує побітову операцію XOR між двома рядками
 def bitwise_xor(str_1, str_2):
     result_xor = ""
-    for i in range(len(str_1)):
-        if str_1[i] == str_2[i]:
+    for bit in range(len(str_1)):
+        if str_1[bit] == str_2[bit]:
             result_xor += "0"
         else:
             result_xor += "1"
     return result_xor
+
+######################################################################################################
+
+
+# Ф-ція шифрування
+def des_encrypt(text, round_keys_binary, round_keys_hex):
+    plaintext_binary = hex_to_bin(text)
+
+    # Початкова перестановка
+    plaintext_binary = permuted_bits(plaintext_binary, initial_permutation, 64)
+
+    # Розділення
+    left_half = plaintext_binary[:32]
+    right_half = plaintext_binary[32:]
+
+    for raund in range(16):
+        # Розширення до 48 біт
+        right_expanded = permuted_bits(right_half, extension_e, 48)
+
+        # XOR з раундовим ключем
+        xor_result = bitwise_xor(right_expanded, round_keys_binary[raund])
+
+        # Заміна значень через S-блоки
+        s_box_output = ""
+        for j in range(8):
+            row = bin_to_dec(xor_result[j * 6:j * 6 + 6])
+            col = bin_to_dec(xor_result[j * 6 + 1:j * 6 + 5])
+            s_box_value = s_box[j][row][col]
+            s_box_output += dec_to_bin(s_box_value)
+
+        # Перестановка
+        s_box_output = permuted_bits(s_box_output, p_permutation, 32)
+
+        # XOR з лівою половиною
+        new_right_half = bitwise_xor(left_half, s_box_output)
+        left_half = right_half
+        right_half = new_right_half
+
+        print("Раунд ", raund + 1, " ", bin_to_hex(left_half), " ", bin_to_hex(right_half), " ", round_keys_hex[raund])
+
+    # Поєднання двох половин
+    combined_data = left_half + right_half
+
+    # Кінцева перестановка
+    cipher_text = permuted_bits(combined_data, final_permutation, 64)
+    return cipher_text
+
