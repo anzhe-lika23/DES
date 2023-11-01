@@ -115,3 +115,13 @@ def bin_to_dec(bin_string):
         bin_string //= 10
         counter += 1
     return dec_string
+
+
+# Ф-ція перетворює десятковий в бінарний рядок
+def dec_to_bin(dec_string):
+    bin_string = bin(dec_string).replace("0b", "")
+    if len(bin_string) % 4 != 0:
+        num_of_zeroes = (4 * (len(bin_string) // 4 + 1)) - len(bin_string)
+        for i in range(0, num_of_zeroes):
+            bin_string = '0' + bin_string
+    return bin_string
