@@ -78,16 +78,28 @@ key_comp = [14, 17, 11, 24, 1, 5, 3, 28, 15, 6, 21, 10,
 shift_table = [1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1]
 
 
+# Ф-ція переводить з шістнадцяткового в бінарний рядок
+def hex_to_bin(hex_string):
+    hex_to_bin_mapping = {'0': "0000", '1': "0001", '2': "0010", '3': "0011", '4': "0100", '5': "0101",
+                          '6': "0110", '7': "0111", '8': "1000", '9': "1001", 'A': "1010", 'B': "1011",
+                          'C': "1100", 'D': "1101", 'E': "1110", 'F': "1111"}
+    bin_string = ""
+    for el in hex_string:
+        bin_string += hex_to_bin_mapping[el]
+    return bin_string
+
+
 # Ф-ція переводить з бінарного рядка в шістнадцятковий
 def bin_to_hex(string):
-    hex_to_bin_mapping = {"0000": '0', "0001": '1', "0010": '2', "0011": '3',
+    bin_to_hex_mapping = {"0000": '0', "0001": '1', "0010": '2', "0011": '3',
                           "0100": '4', "0101": '5', "0110": '6', "0111": '7',
                           "1000": '8', "1001": '9', "1010": 'A', "1011": 'B',
                           "1100": 'C', "1101": 'D', "1110": 'E', "1111": 'F'}
 
     hex_string = ""
-    for i in range(0, len(string), 4):
-        fragment = string[i:i + 4]
-        hex_string += hex_to_bin_mapping[fragment]
+    for el in range(0, len(string), 4):
+        fragment = string[el:el + 4]
+        hex_string += bin_to_hex_mapping[fragment]
 
     return hex_string
+
