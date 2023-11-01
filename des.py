@@ -137,3 +137,15 @@ def permuted_bits(string, ip_arr, arr_size):
     for i in range(0, arr_size):
         permuted_bit_str += string[ip_arr[i] - 1]
     return permuted_bit_str
+
+
+# Ф-ція виконує циклічний зсув вліво
+def circular_shift_left(string, num_shifts):
+    shifted_str = ""
+    for i in range(num_shifts):
+        for j in range(1, len(string)):
+            shifted_str += string[j]
+        shifted_str += string[0]
+        string = shifted_str
+        shifted_str = ""
+    return string
