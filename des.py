@@ -90,16 +90,28 @@ def hex_to_bin(hex_string):
 
 
 # Ф-ція переводить з бінарного рядка в шістнадцятковий
-def bin_to_hex(string):
+def bin_to_hex(bin_string):
     bin_to_hex_mapping = {"0000": '0', "0001": '1', "0010": '2', "0011": '3',
                           "0100": '4', "0101": '5', "0110": '6', "0111": '7',
                           "1000": '8', "1001": '9', "1010": 'A', "1011": 'B',
                           "1100": 'C', "1101": 'D', "1110": 'E', "1111": 'F'}
 
     hex_string = ""
-    for el in range(0, len(string), 4):
-        fragment = string[el:el + 4]
+    for el in range(0, len(bin_string), 4):
+        fragment = bin_string[el:el + 4]
         hex_string += bin_to_hex_mapping[fragment]
 
     return hex_string
 
+
+#  Ф-ція перетворює бінарний рядок в десятковий
+def bin_to_dec(bin_string):
+    binary_copy = bin_string
+    dec_string = 0
+    counter = 0
+    while bin_string != 0:
+        digit = bin_string % 10
+        dec_string += digit * 2 ** counter
+        bin_string //= 10
+        counter += 1
+    return dec_string
