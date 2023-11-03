@@ -107,14 +107,13 @@ def bin_to_hex(bin_string):
 
 
 #  Ф-ція перетворює бінарний рядок в десятковий
-def bin_to_dec(bin_string):
-    binary_copy = bin_string
+def bin_to_dec(binary):
     dec_string = 0
     counter = 0
-    while bin_string != 0:
-        digit = bin_string % 10
-        dec_string += digit * 2 ** counter
-        bin_string //= 10
+    while binary != 0:
+        digit = binary % 10
+        dec_string += digit * pow(2, counter)
+        binary //= 10
         counter += 1
     return dec_string
 
@@ -123,7 +122,8 @@ def bin_to_dec(bin_string):
 def dec_to_bin(dec_string):
     bin_string = bin(dec_string).replace("0b", "")
     if len(bin_string) % 4 != 0:
-        num_of_zeroes = (4 * (len(bin_string) // 4 + 1)) - len(bin_string)
+        format_bin_str = int(len(bin_string) / 4)
+        num_of_zeroes = (4 * (format_bin_str + 1) - len(bin_string))
         for i in range(0, num_of_zeroes):
             bin_string = '0' + bin_string
     return bin_string
@@ -191,16 +191,16 @@ def generation_key(key_hex):
 
 # Ф-ція шифрування
 def des_encrypt(text, round_keys_binary):
-    plaintext_binary = hex_to_bin(text)
+    text = hex_to_bin(text)
 
     # Початкова перестановка
-    plaintext_binary = permuted_bits(plaintext_binary, initial_permutation, 64)
+    text = permuted_bits(text, initial_permutation, 64)
 
     # Розділення
-    left_half = plaintext_binary[:32]
-    right_half = plaintext_binary[32:]
+    left_half = text[0:32]
+    right_half = text[32:64]
 
-    for raund in range(16):
+    for raund in range(0, 16):
         # Розширення до 48 біт
         right_expanded = permuted_bits(right_half, extension_e, 48)
 
@@ -210,8 +210,9 @@ def des_encrypt(text, round_keys_binary):
         # Заміна значень через S-блоки
         s_box_output = ""
         for j in range(8):
-            row = bin_to_dec(xor_result[j * 6:j * 6 + 6])
-            col = bin_to_dec(xor_result[j * 6 + 1:j * 6 + 5])
+            row = bin_to_dec(int(xor_result[j * 6] + xor_result[j * 6 + 5]))
+            col = bin_to_dec(int(xor_result[j * 6 + 1] + xor_result[j * 6 + 2] +
+                                 xor_result[j * 6 + 3] + xor_result[j * 6 + 4]))
             s_box_value = s_box[j][row][col]
             s_box_output += dec_to_bin(s_box_value)
 
@@ -219,11 +220,11 @@ def des_encrypt(text, round_keys_binary):
         s_box_output = permuted_bits(s_box_output, p_permutation, 32)
 
         # XOR з лівою половиною
-        new_right_half = bitwise_xor(left_half, s_box_output)
-        left_half = right_half
-        right_half = new_right_half
+        result_xor = bitwise_xor(left_half, s_box_output)
+        left_half = result_xor
 
-        #print("Раунд ", raund + 1, " ", bin_to_hex(left_half), " ", bin_to_hex(right_half), " ", round_keys_hex[raund])
+        if raund != 15:
+            left_half, right_half = right_half, left_half
 
     # Поєднання двох половин
     combined_data = left_half + right_half
@@ -231,3 +232,14 @@ def des_encrypt(text, round_keys_binary):
     # Кінцева перестановка
     cipher_text = permuted_bits(combined_data, final_permutation, 64)
     return cipher_text
+
+
+plain_text = "0123456789ABCDEF"
+key = "FEFEFEFEFEFEFEFE"
+key_modified = generation_key(key)
+ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+
+print(f"{'='*40}\n{' '*5}DES (Data Encryption Standard)\n{'='*40}")
+print(f"Відкритий текст -> {plain_text}")
+print(f"Ключ -> {key}")
+print(f"Зашифрований текст -> {ciphertext}")
