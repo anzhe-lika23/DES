@@ -292,8 +292,8 @@ def des_decrypt(textcipher, round_keys_binary):
     return bin_to_hex(decrypted_text)
 
 
-latin_text = ""
-latin_key = ""
+latin_text = "Anzhelik"
+latin_key = "password"
 
 if len(latin_text) > 0 and len(latin_key) > 0:
     plain_text = latin_to_hex(latin_text)
