@@ -136,6 +136,15 @@ def latin_to_hex(latin_string):
         number = ord(letter)
         hex_str += hex(number)
     return hex_str.replace('0x', '').upper()
+
+
+# Ф-ція перетворення з 16-річної системи в ascii
+def hex_to_latin(hex_string):
+    binary_data = bytes.fromhex(hex_string)
+    ascii_string = binary_data.decode('utf-8')
+    return ascii_string
+
+
 ################################################################################################
 
 
@@ -305,7 +314,8 @@ if len(latin_text) > 0 and len(latin_key) > 0:
     print(f"Зашифрований текст -> {ciphertext}")
     print(f"Ключ -> {latin_key}")
     print(f"Ключ в hex -> {key}")
-    print(f"Розшифрований текст -> {decrypt_text}")
+    print(f"Розшифрований текст в hex -> {decrypt_text}")
+    print(f"Розшифрований текст -> {hex_to_latin(decrypt_text)}")
 else:
     plain_text = "0123456789ABCDEF"
     key = "FEFEFEFEFEFEFEFE"
