@@ -127,7 +127,6 @@ def dec_to_bin(dec_string):
         for i in range(0, num_of_zeroes):
             bin_string = '0' + bin_string
     return bin_string
-
 ################################################################################################
 
 
@@ -161,11 +160,37 @@ def bitwise_xor(str_1, str_2):
             result_xor += "1"
     return result_xor
 
+
+# Фу-ція генерації ключів
+def generation_key(key_hex):
+    key = hex_to_bin(key_hex)
+
+    # Отримання 56-бітного ключа з 64-бітного
+    key = permuted_bits(key, permutation_key_bits, 56)
+
+    # Розділення ключа на дві половини (С0 і D0)
+    left_c0 = key[0:28]
+    right_d0 = key[28:56]
+
+    round_key_bin = []
+    for i in range(0, 16):
+        # Зсув бітів на n-ні зсуви шляхом перевірки за таблицею зсувів
+        left_c0 = circular_shift_left(left_c0, shift_table[i])
+        right_d0 = circular_shift_left(right_d0, shift_table[i])
+
+        # Скріплюємо дві половинки в одну
+        combine_str = left_c0 + right_d0
+
+        # Стиснення ключа з 56 до 48 біт
+        round_key = permuted_bits(combine_str, key_comp, 48)
+
+        round_key_bin.append(round_key)
+    return round_key_bin
 ######################################################################################################
 
 
 # Ф-ція шифрування
-def des_encrypt(text, round_keys_binary, round_keys_hex):
+def des_encrypt(text, round_keys_binary):
     plaintext_binary = hex_to_bin(text)
 
     # Початкова перестановка
@@ -198,7 +223,7 @@ def des_encrypt(text, round_keys_binary, round_keys_hex):
         left_half = right_half
         right_half = new_right_half
 
-        print("Раунд ", raund + 1, " ", bin_to_hex(left_half), " ", bin_to_hex(right_half), " ", round_keys_hex[raund])
+        #print("Раунд ", raund + 1, " ", bin_to_hex(left_half), " ", bin_to_hex(right_half), " ", round_keys_hex[raund])
 
     # Поєднання двох половин
     combined_data = left_half + right_half
@@ -206,4 +231,3 @@ def des_encrypt(text, round_keys_binary, round_keys_hex):
     # Кінцева перестановка
     cipher_text = permuted_bits(combined_data, final_permutation, 64)
     return cipher_text
-
