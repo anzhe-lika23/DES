@@ -292,8 +292,8 @@ def des_decrypt(textcipher, round_keys_binary):
     return bin_to_hex(decrypted_text)
 
 
-latin_text = "Anzhelik"
-latin_key = "password"
+latin_text = ""
+latin_key = ""
 
 if len(latin_text) > 0 and len(latin_key) > 0:
     plain_text = latin_to_hex(latin_text)
@@ -312,7 +312,6 @@ if len(latin_text) > 0 and len(latin_key) > 0:
     print(f"Зашифрований текст -> {ciphertext}")
     print(f"{'-' * 15}\nРОЗШИФРУВАННЯ:\n{'-' * 15}")
     print(f"Зашифрований текст -> {ciphertext}")
-    print(f"Ключ -> {latin_key}")
     print(f"Ключ в hex -> {key}")
     print(f"Розшифрований текст в hex -> {decrypt_text}")
     print(f"Розшифрований текст -> {hex_to_latin(decrypt_text)}")
