@@ -245,8 +245,46 @@ def des_encrypt(text, round_keys_binary):
     return cipher_text
 
 
-latin_text = ""
-latin_key = ""
+# Функція для розшифрування DES
+def des_decrypt(textcipher, round_keys_binary):
+    textcipher = hex_to_bin(textcipher)
+
+    textcipher = permuted_bits(textcipher, initial_permutation, 64)
+
+    left_half = textcipher[0:32]
+    right_half = textcipher[32:64]
+
+    for raund in range(15, -1, -1):  # Зворотній порядок раундів
+        right_expanded = permuted_bits(right_half, extension_e, 48)
+
+        xor_result = bitwise_xor(right_expanded, round_keys_binary[raund])
+
+        s_box_output = ""
+        for j in range(8):
+            row = bin_to_dec(int(xor_result[j * 6] + xor_result[j * 6 + 5]))
+            col = bin_to_dec(int(xor_result[j * 6 + 1] + xor_result[j * 6 + 2] +
+                                 xor_result[j * 6 + 3] + xor_result[j * 6 + 4]))
+            s_box_value = s_box[j][row][col]
+            s_box_output += dec_to_bin(s_box_value)
+
+        s_box_output = permuted_bits(s_box_output, p_permutation, 32)
+
+        # XOR з лівою половиною (порядок зворотній до зашифрування)
+        result_xor = bitwise_xor(left_half, s_box_output)
+        left_half = result_xor
+
+        if raund != 0:
+            left_half, right_half = right_half, left_half
+
+    combined_data = left_half + right_half
+
+    decrypted_text = permuted_bits(combined_data, final_permutation, 64)
+
+    return bin_to_hex(decrypted_text)
+
+
+latin_text = "Anzhelik"
+latin_key = "password"
 
 if len(latin_text) > 0 and len(latin_key) > 0:
     plain_text = latin_to_hex(latin_text)
@@ -254,6 +292,7 @@ if len(latin_text) > 0 and len(latin_key) > 0:
 
     key_modified = generation_key(key)
     ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+    decrypt_text = des_decrypt(ciphertext, key_modified)
 
     print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
     print(f"ЗАШИФРУВАННЯ:\n{'-' * 15}")
@@ -266,13 +305,14 @@ if len(latin_text) > 0 and len(latin_key) > 0:
     print(f"Зашифрований текст -> {ciphertext}")
     print(f"Ключ -> {latin_key}")
     print(f"Ключ в hex -> {key}")
-    print(f"Розшифрований текст -> ")
+    print(f"Розшифрований текст -> {decrypt_text}")
 else:
     plain_text = "0123456789ABCDEF"
     key = "FEFEFEFEFEFEFEFE"
 
     key_modified = generation_key(key)
     ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+    decrypt_text = des_decrypt(ciphertext, key_modified)
 
     print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
     print(f"ЗАШИФРУВАННЯ:\n{'-' * 15}")
@@ -282,4 +322,4 @@ else:
     print(f"{'-' * 15}\nРОЗШИФРУВАННЯ:\n{'-' * 15}")
     print(f"Зашифрований текст -> {ciphertext}")
     print(f"Ключ в hex -> {key}")
-    print(f"Розшифрований текст -> ")
+    print(f"Розшифрований текст -> {decrypt_text}")
