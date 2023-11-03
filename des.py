@@ -131,16 +131,11 @@ def dec_to_bin(dec_string):
 
 # Ф-ція перетворює з строки в шістнадцятирічну систему
 def latin_to_hex(latin_string):
-    bin_str = ""
+    hex_str = ""
     for letter in latin_string:
         number = ord(letter)
-        bin_str += bin(number)
-    bin_str_edit = bin_str.replace("0b", "")
-    hex_str = bin_to_hex(bin_str_edit)
-    return hex_str
-
-
-print(latin_to_hex('Anzhelik'))
+        hex_str += hex(number)
+    return hex_str.replace('0x', '').upper()
 ################################################################################################
 
 
@@ -250,16 +245,41 @@ def des_encrypt(text, round_keys_binary):
     return cipher_text
 
 
-plain_text = "0123456789ABCDEF"
-key = "FEFEFEFEFEFEFEFE"
-key_modified = generation_key(key)
-ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+latin_text = ""
+latin_key = ""
 
-print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
-print("1) ЗАШИФРУВАННЯ:")
-print(f"Відкритий текст -> {plain_text}")
-print(f"Ключ -> {key}")
-print(f"Зашифрований текст -> {ciphertext}")
-print("2) РОЗШИФРУВАННЯ:")
-print(f"Зашифрований текст -> {ciphertext}")
-print(f"Ключ -> {key}")
+if len(latin_text) > 0 and len(latin_key) > 0:
+    plain_text = latin_to_hex(latin_text)
+    key = latin_to_hex(latin_key)
+
+    key_modified = generation_key(key)
+    ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+
+    print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
+    print(f"ЗАШИФРУВАННЯ:\n{'-' * 15}")
+    print(f"Відкритий текст -> {latin_text}")
+    print(f"Ключ -> {latin_key}")
+    print(f"Текст в hex -> {plain_text}")
+    print(f"Ключ в hex -> {key}")
+    print(f"Зашифрований текст -> {ciphertext}")
+    print(f"{'-' * 15}\nРОЗШИФРУВАННЯ:\n{'-' * 15}")
+    print(f"Зашифрований текст -> {ciphertext}")
+    print(f"Ключ -> {latin_key}")
+    print(f"Ключ в hex -> {key}")
+    print(f"Розшифрований текст -> ")
+else:
+    plain_text = "0123456789ABCDEF"
+    key = "FEFEFEFEFEFEFEFE"
+
+    key_modified = generation_key(key)
+    ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
+
+    print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
+    print(f"ЗАШИФРУВАННЯ:\n{'-' * 15}")
+    print(f"Текст в hex -> {plain_text}")
+    print(f"Ключ в hex -> {key}")
+    print(f"Зашифрований текст -> {ciphertext}")
+    print(f"{'-' * 15}\nРОЗШИФРУВАННЯ:\n{'-' * 15}")
+    print(f"Зашифрований текст -> {ciphertext}")
+    print(f"Ключ в hex -> {key}")
+    print(f"Розшифрований текст -> ")
