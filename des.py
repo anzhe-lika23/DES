@@ -127,6 +127,20 @@ def dec_to_bin(dec_string):
         for i in range(0, num_of_zeroes):
             bin_string = '0' + bin_string
     return bin_string
+
+
+# Ф-ція перетворює з строки в шістнадцятирічну систему
+def latin_to_hex(latin_string):
+    bin_str = ""
+    for letter in latin_string:
+        number = ord(letter)
+        bin_str += bin(number)
+    bin_str_edit = bin_str.replace("0b", "")
+    hex_str = bin_to_hex(bin_str_edit)
+    return hex_str
+
+
+print(latin_to_hex('Anzhelik'))
 ################################################################################################
 
 
@@ -163,14 +177,14 @@ def bitwise_xor(str_1, str_2):
 
 # Фу-ція генерації ключів
 def generation_key(key_hex):
-    key = hex_to_bin(key_hex)
+    key_edit = hex_to_bin(key_hex)
 
     # Отримання 56-бітного ключа з 64-бітного
-    key = permuted_bits(key, permutation_key_bits, 56)
+    key_edit = permuted_bits(key_edit, permutation_key_bits, 56)
 
     # Розділення ключа на дві половини (С0 і D0)
-    left_c0 = key[0:28]
-    right_d0 = key[28:56]
+    left_c0 = key_edit[0:28]
+    right_d0 = key_edit[28:56]
 
     round_key_bin = []
     for i in range(0, 16):
@@ -186,6 +200,8 @@ def generation_key(key_hex):
 
         round_key_bin.append(round_key)
     return round_key_bin
+
+
 ######################################################################################################
 
 
@@ -239,7 +255,11 @@ key = "FEFEFEFEFEFEFEFE"
 key_modified = generation_key(key)
 ciphertext = bin_to_hex(des_encrypt(plain_text, key_modified))
 
-print(f"{'='*40}\n{' '*5}DES (Data Encryption Standard)\n{'='*40}")
+print(f"{'=' * 40}\n{' ' * 5}DES (Data Encryption Standard)\n{'=' * 40}")
+print("1) ЗАШИФРУВАННЯ:")
 print(f"Відкритий текст -> {plain_text}")
 print(f"Ключ -> {key}")
 print(f"Зашифрований текст -> {ciphertext}")
+print("2) РОЗШИФРУВАННЯ:")
+print(f"Зашифрований текст -> {ciphertext}")
+print(f"Ключ -> {key}")
